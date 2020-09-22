@@ -1,9 +1,29 @@
 const express = require('express'); 
-const connectDB = require('./config/db'); 
+const mongoose = require('mongoose'); 
+const bodyParser = require('body-parser'); 
+
 const app = express(); 
 
-connectDB(); 
+//Bodyparser middleware 
+app.use(
+    bodyParser.urlencoded({
+        extended: false
+    })
+); 
+app.use(bodyParser.json()); 
 
-const PORT = process.env.PORT || 5000; 
+//DB Config 
+const db = require('./config/keys').mongoURI; 
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`))
+//Connect to MongoDB 
+mongoose
+    .connect(
+        db, 
+        {useNewUrlParser: true}
+    )
+    .then(() => console.log('MongoDB successfully connected'))
+    .catch(err => console.log(err)); 
+
+const port = process.env.PORT || 5000; 
+
+app.listen(port, () => console.log(`Server up and running on port ${port}.`))
