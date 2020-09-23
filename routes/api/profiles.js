@@ -48,3 +48,61 @@ router.post('/register', (req, res) => {
     }); 
 
 }); 
+
+// @route POST api/users/login
+// @desc Login user and return JWT token 
+// @access Public 
+router.post('/login', (req, res) => {
+    //form validation
+    const { errors, isValid } = validateLoginInput(req.body); 
+
+    //Check validation 
+    if (!isValid) {
+        return res.status(400).json(errors); 
+    }
+
+    const email = req.body.email; 
+    const password = req.body.password; 
+
+    //find user by email 
+    Profile.findOne({ email }).then(user => {
+        //check if profile exists 
+        if (!profile) {
+            return res.status(404).json({ emailnotfound: 'Email not found' }); 
+        }
+
+        //check password 
+        bcrypt.compare(password, profile.password).then(isMatch => {
+            if (isMatch) {
+                //user matched
+                //create JWT Payload 
+                const payload = {
+                    id: profile.id, 
+                    firstName: profile.firstName, 
+                    lastName: profile.lastName
+                }; 
+
+                //sign token 
+                jwt.sign(
+                    payload, 
+                    keys.secretOrKey, 
+                    {
+                        expiresIn: 31556926 // 1 year in seconds 
+                    }, 
+                    (err, token) => {
+                        res.json({
+                            success: true, 
+                            token: 'Bearer ' + token
+                        }); 
+                    }
+                )
+            } else {
+                return res 
+                    .status(400)
+                    .json({ passwordincorrect: 'Password incorrect' }); 
+            }
+        }); 
+    }); 
+}); 
+
+module.exports = router; 
