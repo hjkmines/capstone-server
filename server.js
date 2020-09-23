@@ -21,7 +21,7 @@ mongoose
         db, 
         {useNewUrlParser: true}
     )
-    .then(() => console.log('MongoDB successfully connected'))
+    .then(() => console.log('MongoDB successfully connected!'))
     .catch(err => console.log(err)); 
 
 const port = process.env.PORT || 5000; 
