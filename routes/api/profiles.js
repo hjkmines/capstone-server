@@ -11,10 +11,13 @@ const validateLoginInput = require('../../validation/login');
 //load profile model 
 const Profile = require('../../models/Profile'); 
 
-// @route POST api/users/register 
+// @route POST api/profiles/register 
 // @desc Register user 
 // @access Public 
 router.post('/register', (req, res) => {
+
+    //form validation
+    const { errors, isValid } = validateRegisterInput(req.body); 
 
     //check validation 
     if (!isValid) {
@@ -49,10 +52,11 @@ router.post('/register', (req, res) => {
 
 }); 
 
-// @route POST api/users/login
+// @route POST api/profiles/login
 // @desc Login user and return JWT token 
 // @access Public 
 router.post('/login', (req, res) => {
+    
     //form validation
     const { errors, isValid } = validateLoginInput(req.body); 
 
